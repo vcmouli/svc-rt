@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>gs-relational-data-access</artifactId>
+    <artifactId>service-runtime</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -26,8 +26,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+        <dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-core</artifactId>
+			<version>0.9</version>
+		</dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -37,5 +41,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

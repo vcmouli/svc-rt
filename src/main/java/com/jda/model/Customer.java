@@ -1,4 +1,4 @@
-package hello;
+package com.jda.model;
 
 public class Customer {
     private long id;
