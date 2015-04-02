@@ -1,0 +1,10 @@
+package com.jda.recommendation;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/recommendation")
+public class RecommendationEngineController {
+	
+}

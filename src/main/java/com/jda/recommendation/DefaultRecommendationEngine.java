@@ -1,6 +1,7 @@
 package com.jda.recommendation;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,16 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jda.util.FileUtil;
 
-public class DefaultRecommendationEngine {
+public class DefaultRecommendationEngine implements RecommendationEngine {
 	private static Map<String, String> moviesMap = new HashMap<String, String>();
 	private static int NUMBER_OF_RECOMMENDATIONS = 10;
 	private static int USER_ID = 716;
+	private static final Logger logger = LoggerFactory.getLogger(DefaultRecommendationEngine.class);
 	
 	static {
 		init();
@@ -34,24 +38,12 @@ public class DefaultRecommendationEngine {
 		FileUtil obj = new FileUtil();
 		String movies = "dataset/movies.txt";
 		moviesMap = obj.load(movies, "\\|");
-		System.out.println("movies count: " + moviesMap.size());
+		logger.info("movies count: {}", moviesMap.size());
 	}
 
 	public static void main(String[] args) throws Exception {
-		long startTime = System.currentTimeMillis();
-		String movieName = "";
-		long movieId = 0;
-		DataModel model = new FileDataModel(new File("dataset/ratings.txt"));
-		System.out.println("*** movie lens recommendation");
-		//TODO: userId below is hard-coded for now. This should come as Input for REST service
-		List<RecommendedItem> recommendations = recommend(model, USER_ID);
-		for (RecommendedItem recommendation : recommendations) {
-			movieId = recommendation.getItemID();
-			movieName = moviesMap.get(Long.toString(movieId));
-			System.out.println(movieId + " - " + movieName + " - " + recommendation.getValue());
-		}
-		long endTime = System.currentTimeMillis();
-		System.out.println("Time taken in ms: " + (endTime - startTime));
+		RecommendationEngine recoEngine = new DefaultRecommendationEngine();
+		recoEngine.recommendForUser(USER_ID);
 	}
 
 	private static List<RecommendedItem> recommend(DataModel model, int userid)
@@ -66,5 +58,24 @@ public class DefaultRecommendationEngine {
 
 		List<RecommendedItem> recommendations = recommender.recommend(userid, NUMBER_OF_RECOMMENDATIONS);
 		return recommendations;
+	}
+
+	@Override
+	public String recommendForUser(int userId) throws Exception {
+		long startTime = System.currentTimeMillis();
+		String movieName = "";
+		List<String> output = new ArrayList<String>();
+		long movieId = 0;
+		DataModel model = new FileDataModel(new File("dataset/ratings.txt"));
+		logger.info("*** movie lens recommendation ****");
+		List<RecommendedItem> recommendations = recommend(model, userId);
+		for (RecommendedItem recommendation : recommendations) {
+			movieId = recommendation.getItemID();
+			movieName = moviesMap.get(Long.toString(movieId));
+			output.add(movieId + " - " + movieName + " - " + recommendation.getValue());
+		}
+		long endTime = System.currentTimeMillis();
+		logger.info("Time taken in ms: {}", (endTime - startTime));
+		return output.toString();
 	}
 }
