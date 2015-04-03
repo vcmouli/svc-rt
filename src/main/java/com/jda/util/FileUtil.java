@@ -1,6 +1,7 @@
 package com.jda.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,7 +23,9 @@ public class FileUtil {
 		Map<String, String> dataMap = new HashMap<String, String>();
 		
 		try {
-			br = new BufferedReader(new FileReader(filename));
+			ClassLoader classLoader = getClass().getClassLoader();
+			File file = new File(classLoader.getResource(filename).getFile());
+			br = new BufferedReader(new FileReader(file));
 			while ((line = br.readLine()) != null) {
 				String[] dataArray = line.split(separator);
 				//System.out.println(dataArray[0] + "-" + dataArray[1]);
