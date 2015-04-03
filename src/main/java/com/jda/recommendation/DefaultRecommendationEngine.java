@@ -1,6 +1,7 @@
 package com.jda.recommendation;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +24,6 @@ import com.jda.util.FileUtil;
 public class DefaultRecommendationEngine implements RecommendationEngine {
 	private static Map<String, String> moviesMap = new HashMap<String, String>();
 	private static final Logger logger = LoggerFactory.getLogger(DefaultRecommendationEngine.class);
-	private static final String ONE_MILLION_DATASET_PATH = "dataset/01-million";
-	private static final String DATASET_PATH = ONE_MILLION_DATASET_PATH;
 	
 	private static final int DEFAULT_NUMBER_OF_RECOMMENDATIONS = 10;
 	private static int USER_ID = 716;
@@ -34,9 +33,8 @@ public class DefaultRecommendationEngine implements RecommendationEngine {
 	}
 	
 	private static void loadMovies() {
-		FileUtil obj = new FileUtil();
-		String moviesFilePath = DATASET_PATH + "/movies.txt";
-		moviesMap = obj.load(moviesFilePath, "\\|");
+		FileUtil fileUtil = new FileUtil();
+		moviesMap = fileUtil.load(FileUtil.MOVIES_FILE_PATH, "\\|");
 		logger.info("movies count: {}", moviesMap.size());
 	}
 
@@ -51,7 +49,8 @@ public class DefaultRecommendationEngine implements RecommendationEngine {
 		String movieName = "";
 		List<String> output = new ArrayList<String>();
 		long movieId = 0;
-		DataModel model = new FileDataModel(new File(DATASET_PATH + "/ratings.txt"));
+
+		DataModel model = new FileDataModel(new File(FileUtil.RATINGS_FILE_PATH));
 		logger.info("*** movie lens recommendation ****");
 		List<RecommendedItem> recommendations = recommend(model, userId);
 		for (RecommendedItem recommendation : recommendations) {
