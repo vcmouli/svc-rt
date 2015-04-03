@@ -2,8 +2,8 @@ package com.jda.util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,8 @@ import java.util.Map;
 public class FileUtil {
 	private static final String ONE_MILLION_DATASET_PATH = "dataset/01-million";
 	private static final String DATASET_PATH = ONE_MILLION_DATASET_PATH;
-	public static final String MOVIES_FILE_PATH = DATASET_PATH + "/movies.txt";
+	public static final String MOVIES_FILE_PATH = "/" + DATASET_PATH + "/movies.txt";
+	//ratings file is loaded by mahout FileDataModel which is not tuned to read from a jar. So avoiding "/"
 	public static final String RATINGS_FILE_PATH = DATASET_PATH + "/ratings.txt";
 
 	public static void main(String[] args) {
@@ -27,7 +28,11 @@ public class FileUtil {
 		Map<String, String> dataMap = new HashMap<String, String>();
 		
 		try {
-			br = new BufferedReader(new FileReader(filename));
+			//br = new BufferedReader(new FileReader(filename));
+			
+			InputStream in = getClass().getResourceAsStream(filename); 
+			br = new BufferedReader(new InputStreamReader(in));
+			
 			while ((line = br.readLine()) != null) {
 				String[] dataArray = line.split(separator);
 				dataMap.put(dataArray[0], dataArray[1]);
